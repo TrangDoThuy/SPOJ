@@ -1,0 +1,71 @@
+/*
+ * spoj.cpp
+ *
+ *  Created on: 6 Jan 2020
+ *      Author: trang
+ */
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <set>
+using namespace std;
+
+int main() {
+	// create list of prime numbers
+	vector<int>primes;
+	primes.push_back(2);
+	for(int i=3;i<=33200;i+=2){
+		bool isPrime=true;
+		int cap = sqrt(i)+1;
+		vector<int>::iterator p;
+		for(p=primes.begin();p!=primes.end();p++){
+			if(*p>=cap)
+				break;
+			if(i%*p==0){
+				isPrime = false;
+				break;
+			}
+
+		}
+		if(isPrime)
+			primes.push_back(i);
+	}
+
+	int numTest, small, large;
+	cin>>numTest;
+	for(int i=0;i<numTest;++i){
+		cin>>small>>large;
+	if(small<2)
+		small=2;
+
+	int cap = sqrt(large)+1;
+	// notPrime contains all not prime numbers from small to large
+	set<int> notPrime; //set is implemented as Red Black tree with searching, deletion and insertion is O(n*log(n))
+	notPrime.clear();
+	vector<int>::iterator p;
+	for(p=primes.begin();p!=primes.end();++p){
+		if (*p>cap)
+			break;
+		int start;
+		if(*p>=small)
+			start =(*p)*2;
+		else
+			start = small+(*p-small%*p)%*p;// finding nearest number which is divisible by *p
+		for(int j=start;j<=large;j+=*p)
+			notPrime.insert(j);
+
+	}
+	//find all prime numbers from small to large
+	for(int j=small;j<=large;++j){
+		if(notPrime.count(j)==0)
+			cout<<j<<endl;
+	}
+	}
+	cout<<endl;
+
+
+	return 0;
+}
+
+
+
