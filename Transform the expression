@@ -1,0 +1,70 @@
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+//provide precedence of operators
+int precedence(char opr){
+	switch(opr){
+	case '+':
+	case '-':
+		return 1;
+	case '*':
+	case '/':
+		return 2;
+	case '^':
+		return 3;
+	default:
+		return -1;
+	}
+}
+string transform(const string& str){
+	string postStr;
+	stack<char> stk;// this stack contains parenthesis and operators
+	for(int i=0; str[i];++i){
+		if((str[i]>='a'&&str[i]<='z')||(str[i]>='A'&&str[i]<='Z')){
+			postStr.push_back(str[i]);
+		}
+		else if(str[i]=='(')
+			stk.push('(');
+		else if(str[i]==')'){
+			// pop out and add everything to postStr until getting opening parenthesis
+			while(!stk.empty()&&stk.top()!='('){
+				postStr.push_back(stk.top());
+				stk.pop();//pop out the operator
+			}
+			if(!stk.empty())
+				stk.pop();//pop out the opening parenthesis
+			else{
+				//if cannot find the opening parenthesis
+				cerr<<"Invalid infix expression"<<str<<endl;
+				exit(1);
+			}
+		}
+		//encounter an operator
+		else{
+			//pop and add to postStr all operators that has greater precedence than current str[i]
+			while(!str.empty() && precedence(str[i])<precedence(stk.top())){
+				postStr.push_back(stk.top());
+				stk.pop();
+			}
+			stk.push(str[i]);
+
+		}
+	}
+	//add everything left in stack to the postStr
+	while(!stk.empty()){
+		postStr.push_back(stk.top());
+		stk.pop();
+	}
+	return postStr;
+}
+int main() {
+	int num;
+	cin>>num;
+	while(num--){
+		string str;
+		cin>>str;
+		cout<<transform(str)<<endl;
+	}
+	return 0;
+}
